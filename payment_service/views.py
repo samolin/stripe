@@ -101,11 +101,11 @@ class ProductDetailView(DetailView):
 @csrf_exempt
 def create_checkout_session(request, id):
     main_domain = "http://127.0.0.1:8000"
-    #product = get_object_or_404(Item, pk=id)
-    lin_items=[]
-    for item in request.session['product']:
-        product = get_object_or_404(Item, pk=item)
-        prod = {
+    product = get_object_or_404(Item, pk=id)
+    stripe.api_key = settings.STRIPE_SECRET_KEY
+    checkout_session = stripe.checkout.Session.create(
+            payment_method_types=['card'],
+            line_items=[{
                     'price_data': {
                         'currency': 'usd',
                         'unit_amount': product.price,
@@ -115,13 +115,7 @@ def create_checkout_session(request, id):
                         },
                     },
                     'quantity': 1,
-                } 
-        print(prod)
-        lin_items.append(prod)
-    stripe.api_key = settings.STRIPE_SECRET_KEY
-    checkout_session = stripe.checkout.Session.create(
-            payment_method_types=['card'],
-            line_items=lin_items,
+            }],
             metadata={
                 "product_id": product.id
             },
@@ -129,7 +123,6 @@ def create_checkout_session(request, id):
         success_url=main_domain + '/success' + "?session_id={CHECKOUT_SESSION_ID}",
         cancel_url=main_domain + '/failed',
     )
-    print('LIN_ITEMS', lin_items)
     return (JsonResponse({'sessionId': checkout_session.id}))
 
 class PaymentFailedView(TemplateView):
@@ -183,7 +176,7 @@ class OrderListView(ListView):
     context_object_name = 'cart_list'
 
     def get_context_data(self, **kwargs):
-        lts = Order.objects.latest('id').id
+        lts = Order.objects.latest('id')
         print(Order.objects.latest('id'))
         print(Order_Product.objects.get(id=lts))
         kwargs['cart_list'] = Order.objects.all()
