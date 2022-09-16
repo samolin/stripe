@@ -1,43 +1,72 @@
 {% extends 'payment_service/base.html' %}
 
 {% block content %}
-    <h1 class="text-center">Order</h1>
-    <div class="container">
-        
-        {% if cart_list %}
-        {% for i in cart_list %}
-            {{ i.id }}
-        {% endfor %}
-        <table class="table table-striped table-bordered table-hover">
-            <thead>
+<div class="container">
+    
+    {% if cart_list %}
+    <h1 class="text-center">Order №{{ cart_id }}</h1>
+    <table class="table table-striped table-bordered table-hover">
+        <thead>
+            <tr>
+                <th>Product</th>
+                <th>Price</th>
+                <th>Status</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for i in cart_list %}
                 <tr>
-                    <th>Product</th>
-                    <th>Price</th>
-                    <th>Status</th>
+                    <td>{{ i.item_id }}</td>
+                    <td>{{ i.item_id.get_price }}$</td>
+                    <td>
+                        {% if i.has_paid %}
+                            <b class="text-success">Success</b>
+                        {% else %}
+                            <b class="text-danger">Failed</b>
+                        {% endif %}
+                    </td>
                 </tr>
-            </thead>
-            <tbody>
-                {% for i in cart_list %}
-                    <tr>
-                        <td>{{ i.order.values }}</td>
-                        <td>{{ i.item.get_price }}$</td>
-                        <td>
-                            {% if i.has_paid %}
-                                <b class="text-success">Success</b>
-                            {% else %}
-                                <b class="text-danger">Failed</b>
-                            {% endif %}
-                        </td>
-                    </tr>
-                {% endfor %}        
-            </tbody>
-        </table>
-        <br><button class="btn btn-success ml-auto" id="checkout-button">Buy</button>
-        {% else %}
-        <div class="alert alert-info">
-            Payment history is empty.
-        </div>
-        {% endif %}   
+            {% endfor %}        
+        </tbody>
+    </table>
+    <br>
+    <button class="btn btn-success ml-auto" id="checkout-button">Buy</button>
+    {% else %}
+    <div class="alert alert-info">
+        Payment history is empty.
     </div>
+    {% endif %}   
+</div>
+
+<script src="https://js.stripe.com/v3/"></script>
+<script type="text/javascript">
+    // Create an instance of the Stripe object with your publishable API key
+    var stripe = Stripe('{{ stripe_publishable_key }}');
+    var checkoutButton = document.getElementById('checkout-button');
+    checkoutButton.addEventListener('click', function () {
+        // Create a new Checkout Session using the server-side endpoint you
+        // created in step 3.
+        fetch("{% url 'api_checkout_session_order' id=cart_id %}", {
+            method: 'POST'
+        })
+            .then(function (response) {
+                return response.json();
+            })
+            .then(function (session) {
+                return stripe.redirectToCheckout({ sessionId: session.sessionId });
+            })
+            .then(function (result) {
+                // If `redirectToCheckout` fails due to a browser or network
+                // error, you should display the localized error message to your
+                // customer using `error.message`.
+                if (result.error) {
+                    alert(result.error.message);
+                }
+            })
+            .catch(function (error) {
+                console.error('Error:', error);
+            });
+    });
+</script>
 {% endblock content %}
     

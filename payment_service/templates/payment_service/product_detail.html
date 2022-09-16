@@ -23,7 +23,6 @@
         <div class="card-footer d-flex">
             <form action="{% url 'add' id=object.id %}" method="GET">
                 {% csrf_token %}
-                
                 <button type="submit">Add</button>
             </form>
             <button class="btn btn-success ml-auto" id="checkout-button">Buy</button>
@@ -36,10 +35,7 @@
     // Create an instance of the Stripe object with your publishable API key
     var stripe = Stripe('{{ stripe_publishable_key }}');
     var checkoutButton = document.getElementById('checkout-button');
-
     checkoutButton.addEventListener('click', function () {
-
-
         // Create a new Checkout Session using the server-side endpoint you
         // created in step 3.
         fetch("{% url 'api_checkout_session' id=object.id %}", {
