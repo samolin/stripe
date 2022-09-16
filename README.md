@@ -1,8 +1,12 @@
 # payment_service
 
-## Getting Started
+## First start
 
-The project uses [poetry](https://python-poetry.org/docs/). Make sure you install it. Also project uses [docker and docker-compose](https://docs.docker.com/engine/install/ubuntu/).
+Download the project dependencies:
+
+* [python 3.10](https://www.python.org/downloads/)
+* [poetry](https://python-poetry.org/docs/)
+* [docker and docker-compose](https://docs.docker.com/engine/install/ubuntu/)
 
 Run the development server:
 
