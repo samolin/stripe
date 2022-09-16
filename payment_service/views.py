@@ -2,7 +2,6 @@ import json
 import stripe
 from django.shortcuts import render, get_object_or_404
 from django.views.generic import TemplateView
-from django.views import View
 from .models import Item
 from django.views.decorators.csrf import csrf_exempt
 from django.http.response import JsonResponse
@@ -135,7 +134,6 @@ def create_checkout_session_order(request, id):
         cancel_url=main_domain + '/failed',
     )
     current_order = Order.objects.get(id=id)
-    print(current_order)
     current_order.status = 'finished'
     current_order.save()
     return (JsonResponse({'sessionId': checkout_session.id}))

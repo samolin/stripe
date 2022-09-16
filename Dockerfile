@@ -11,14 +11,12 @@ ENV PYTHONUNBUFFERED=1 \
   POETRY_VIRTUALENVS_CREATE=false \
   POETRY_CACHE_DIR='/var/cache/pypoetry'
 
-WORKDIR /usr/src/app
+COPY . /code/
 
-COPY pyproject.toml poetry.lock /usr/src/app/
+WORKDIR /code/
 
 # Install dependencies:
 RUN pip3 install poetry
 RUN poetry install
-RUN python manage.py createsuperuser
-RUN python manage.py migrate
-# copy project
-COPY . .
+
+

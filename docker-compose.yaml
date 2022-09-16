@@ -4,6 +4,8 @@ services:
   app:
     build: .
     restart: unless-stopped
+    command: "poetry run python manage.py makemigrations"
+    command: "poetry run python manage.py migrate"
     command: "poetry run python manage.py runserver 0.0.0.0:8000"
     ports:
       - 8000:8000
