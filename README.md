@@ -11,6 +11,6 @@ make install
 make start
 ```
 
-Deploy project from local. The project uses [ansible]
+## Deploy project from local.
 
 In process..
