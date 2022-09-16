@@ -96,8 +96,7 @@ def add_to_cart(request, id):
 class OrderListView(ListView):
     model = Order
     template_name = "payment_service/cart_list.html"
-    context_object_name = 'cart_list'
-
+    
     def get_context_data(self, **kwargs):
         context = super(OrderListView, self).get_context_data(**kwargs)
         context['stripe_publishable_key'] = settings.STRIPE_PUBLISHABLE_KEY
@@ -135,5 +134,9 @@ def create_checkout_session_order(request, id):
         success_url=main_domain + '/success' + "?session_id={CHECKOUT_SESSION_ID}",
         cancel_url=main_domain + '/failed',
     )
+    current_order = Order.objects.get(id=id)
+    print(current_order)
+    current_order.status = 'finished'
+    current_order.save()
     return (JsonResponse({'sessionId': checkout_session.id}))
 
