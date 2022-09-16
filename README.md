@@ -10,3 +10,7 @@ Run the development server:
 make install
 make start
 ```
+
+Deploy project from local. The project uses [ansible]
+
+In process..
