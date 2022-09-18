@@ -8,6 +8,7 @@ authors = ["samolin <samolin.vlad@gmail.com>"]
 python = "^3.9"
 Django = "^4.0"
 stripe = "^4.1.0"
+gunicorn = "^20.1.0"
 
 [tool.poetry.dev-dependencies]
 
