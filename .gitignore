@@ -1,4 +1,6 @@
 /db.sqlite3
 .DS_Store
 payment_service/__pycache__/*
+payment_service/migrations/*
+app/__pycache__/*
 
