@@ -1,1 +1,1 @@
-web: poetry run gunicorn app.wsgi 
+web: gunicorn app.wsgi --log-file
