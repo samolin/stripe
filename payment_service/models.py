@@ -1,3 +1,4 @@
+from curses import flash
 from django.db import models
 
 
@@ -15,6 +16,7 @@ class Item(models.Model):
 class Order(models.Model):
     id = models.BigAutoField(primary_key=True)
     status = models.CharField(max_length=30, default='in_process')
+    session_id = models.CharField(max_length=50, blank=True)
 
     def __str__(self):
         return str(self.id)

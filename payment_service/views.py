@@ -1,4 +1,4 @@
-import json
+from urllib import request
 import stripe
 from django.shortcuts import render, get_object_or_404
 from django.views.generic import TemplateView
@@ -14,22 +14,14 @@ from django.shortcuts import redirect
 
 stripe.api_key = settings.STRIPE_SECRET_KEY
 
-class LandingPageView(TemplateView):
-    template_name = 'index.html'
-
-    def get_context_data(self, **kwargs):
-        item = Item.objects.get(name='glass')
-        context = super(LandingPageView, self).get_context_data(**kwargs)
-        context.update({
-            'item': item,
-            'STRIPE_PUBLISHABLE_KEY': settings.STRIPE_PUBLISHABLE_KEY
-        })
-        return context
-
 class ProductListView(ListView):
     model = Item
     template_name = "payment_service/product_list.html"
     context_object_name = 'product_list'
+
+    def get_context_data(self, **kwargs):
+        create_session(self.request)
+        return super(ProductListView, self).get_context_data(**kwargs)
 
 class ProductDetailView(DetailView):
     model = Item
@@ -85,11 +77,11 @@ class PaymentSuccessView(TemplateView):
 def add_to_cart(request, id):
     if request.method == 'GET':
         try:
-            latest = Order.objects.get(status='in_process')
+            order = Order.objects.get(session_id=request.session['session_id'])
         except:
-            Order.objects.create()
-            latest = Order.objects.get(status='in_process')
-        Order_Product.objects.create(cart_id = latest, item_id = Item.objects.get(id=id))
+            Order.objects.create(session_id=request.session['session_id'])
+            order = Order.objects.get(session_id=request.session['session_id'])
+        Order_Product.objects.create(cart_id = order, item_id = Item.objects.get(id=id))
         return redirect('home')
 
 class OrderListView(ListView):
@@ -100,9 +92,8 @@ class OrderListView(ListView):
         context = super(OrderListView, self).get_context_data(**kwargs)
         context['stripe_publishable_key'] = settings.STRIPE_PUBLISHABLE_KEY
         try: 
-            Order.objects.get(status = 'in_process').id
-            context['cart_id'] = Order.objects.get(status = 'in_process').id
-            context['cart_list'] = Order_Product.objects.filter(cart_id = Order.objects.get(status = 'in_process').id)
+            context['cart_id'] = Order.objects.get(session_id=self.request.session['session_id']).id
+            context['cart_list'] = Order_Product.objects.filter(cart_id=context['cart_id'])
             return context
         except:
             return context
@@ -110,7 +101,7 @@ class OrderListView(ListView):
 @csrf_exempt
 def create_checkout_session_order(request, id):
     main_domain = "http://127.0.0.1:8000"
-    order_id = Order_Product.objects.filter(cart_id = Order.objects.get(status = 'in_process').id)
+    order_id = Order_Product.objects.filter(cart_id = id)
     line_items_attrs = []
     for i in order_id:
         line_items_attrs.append(
@@ -138,3 +129,10 @@ def create_checkout_session_order(request, id):
     current_order.save()
     return (JsonResponse({'sessionId': checkout_session.id}))
 
+def create_session(request):
+    try:
+        return request.session['session_id']
+    except: 
+        request.session.create()
+        request.session['session_id'] = request.session.session_key
+        return request.session['session_id']
