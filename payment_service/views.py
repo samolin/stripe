@@ -35,7 +35,7 @@ class ProductDetailView(DetailView):
     
 @csrf_exempt
 def create_checkout_session(request, id):
-    main_domain = settings.main_domain
+    main_domain = settings.MAIN_DOMAIN
     product = get_object_or_404(Item, pk=id)
     stripe.api_key = settings.STRIPE_SECRET_KEY
     checkout_session = stripe.checkout.Session.create(
@@ -100,7 +100,7 @@ class OrderListView(ListView):
 
 @csrf_exempt
 def create_checkout_session_order(request, id):
-    main_domain = settings.main_domain
+    main_domain = settings.MAIN_DOMAIN
     order_id = Order_Product.objects.filter(cart_id = id)
     line_items_attrs = []
     for i in order_id:

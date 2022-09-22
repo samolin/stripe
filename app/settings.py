@@ -135,6 +135,6 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 STRIPE_PUBLISHABLE_KEY = 'pk_test_51LhBABGxPMSurCkALEYHy8w4yMBHn4PNjihWp1x5uJOJ4A8HmbktkFamcpDNyQse9YbnqPMmJvZJd6FGJmICPoUW00xugv6zWX'
 STRIPE_SECRET_KEY = 'sk_test_51LhBABGxPMSurCkAYUMCa6oyd8sRrAwGNASCRrHELYehz8mCrzaJHbZCLatLLiNlYXyecdwDD4qQVcXSMWldINnC00nSFdBjzD'
 
-main_domain = 'stripe-payment-service.herokuapp.com'
+MAIN_DOMAIN = 'https://stripe-payment-service.herokuapp.com'
 
-#main_domain = '127.0.0.1'
+#MAIN_DOMAIN = 'http://127.0.0.1:8000'
