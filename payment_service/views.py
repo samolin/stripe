@@ -1,4 +1,3 @@
-from urllib import request
 import stripe
 from django.shortcuts import render, get_object_or_404
 from django.views.generic import TemplateView
@@ -94,6 +93,10 @@ class OrderListView(ListView):
         try: 
             context['cart_id'] = Order.objects.get(session_id=self.request.session['session_id']).id
             context['cart_list'] = Order_Product.objects.filter(cart_id=context['cart_id'])
+            total = 0
+            for i in context['cart_list']:
+                total += i.item_id.price
+            context['total_price'] = "{0:.2f}".format(total / 100)
             return context
         except:
             return context

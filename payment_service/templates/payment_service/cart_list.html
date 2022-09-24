@@ -10,7 +10,6 @@
             <tr>
                 <th>Product</th>
                 <th>Price</th>
-                <th>Status</th>
             </tr>
         </thead>
         <tbody>
@@ -18,15 +17,11 @@
                 <tr>
                     <td>{{ i.item_id }}</td>
                     <td>{{ i.item_id.get_price }}$</td>
-                    <td>
-                        {% if i.has_paid %}
-                            <b class="text-success">Success</b>
-                        {% else %}
-                            <b class="text-danger">Failed</b>
-                        {% endif %}
-                    </td>
-                </tr>
-            {% endfor %}        
+                    {% endfor %}  
+                </tr>      
+                <td><strong style="font-size: 22px;">TOTAL</strong></td>
+                <td><strong style="font-size: 22px;">{{ total_price }}$</strong></td>
+
         </tbody>
     </table>
     <br>
@@ -57,7 +52,7 @@
     </script>
     {% else %}
     <div class="alert alert-info">
-        Payment history is empty.
+        You have no order yet.
     </div>
     {% endif %}   
 </div>
